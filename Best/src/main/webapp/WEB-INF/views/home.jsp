@@ -2,11 +2,11 @@
 <%@ page session="false" %>
 <html>
 <head>
-	<title>Home</title>
+	<title>HomePage</title>
 </head>
 <body>
 <h1>
-	Hello world!  
+	 Welcome to DimArt Systems   
 </h1>
 
 <P>  The time on the server is ${serverTime}. </P>
