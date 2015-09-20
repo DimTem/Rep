@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+	id="WebApp_ID" version="3.0">
+	<display-name>FirstJspServletJsp</display-name>
+	<welcome-file-list>
+		<welcome-file>index.jsp</welcome-file>
+	</welcome-file-list>
+	<error-page>
+		<error-code>404</error-code>
+<location>/jsp/error/error.jsp</location>
+	</error-page>
+	<error-page>
+		<exception-type>java.lang.RuntimeException</exception-type>
+		<location>/jsp/error/error.jsp</location>
+	</error-page>
+	
+	<listener>
+<listener-class>ua.nure.bratiuschenko.SummaryTask04.Listener.SessionListenerImpl</listener-class>
+</listener>
+	
+	<!--============================================================
+	i18n support
+=============================================================-->
+  <!-- this way we set the resource bundle name -->
+  <context-param>
+    <param-name>javax.servlet.jsp.jstl.fmt.localizationContext</param-name>
+    <param-value>resources</param-value>
+  </context-param>
+  
+  <!-- this way we set the default locale (optional) -->
+  <!-- the (preferable) browser's locale will be used if we don't set the default locale --> 
+  <context-param>
+    <param-name>javax.servlet.jsp.jstl.fmt.locale</param-name>
+    <param-value>ru</param-value>
+  </context-param>
+  
+  <!-- supported locales -->
+  <context-param>
+    <param-name>locales</param-name>
+    <param-value>ru en</param-value>
+  </context-param>
+	
+</web-app>

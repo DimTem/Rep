@@ -1,0 +1,38 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+    <%@page import="javax.servlet.jsp.jstl.core.Config"%>
+<%@ include file="/WEB-INF/include/head.jspf"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>Discharge</title>
+<style>
+   body {
+    background: #c7b49b url(images/image.jpg); /* Цвет фона и путь к файлу */
+    color: #fff; /* Цвет текста */
+   }
+  </style>
+</head>
+<body>
+<h2><fmt:message key="patient.discharge"  /></h2>
+	<form action="/SummaryTask4/Patient" method="post">
+		<table>
+			<tr>
+				<th>id</th>
+				<th>status</th>
+				<th>final diagnosis</th>
+			</tr>
+			<tr>
+				<td><input type="text" name="d_id"></td>
+			<td>	<select name="status">
+					<option value="on treatment">on treatment</option>
+					<option value="discharged">discharged</option>
+				</select></td>
+				<td><input type="text" name="d_diagnos"></td>
+			</tr>
+		</table>
+		<input type="submit" name="dissubmit" value="<fmt:message key="patient.confirmb"  />">
+	</form>
+</body>
+</html>

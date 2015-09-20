@@ -1,0 +1,30 @@
+package ua.nure.bratiuschenko.SummaryTask4.web.listener;
+
+import javax.servlet.annotation.WebListener;
+import javax.servlet.http.HttpSessionAttributeListener;
+import javax.servlet.http.HttpSessionBindingEvent;
+
+import org.apache.log4j.Logger;
+
+@WebListener
+public class SessionListenerImpl implements HttpSessionAttributeListener {
+	private static final Logger LOG = Logger
+			.getLogger(SessionListenerImpl.class);
+	private static final String POINTS = " : ";
+	
+	public void attributeRemoved(HttpSessionBindingEvent ev) {
+		LOG.debug("remove: " + ev.getClass().getSimpleName() + POINTS + ev.getName()
+				+ " : " + ev.getValue());
+	}
+
+	public void attributeAdded(HttpSessionBindingEvent ev) {
+		System.out.println("add: " + ev.getClass().getSimpleName() + POINTS
+				+ ev.getName() + POINTS + ev.getValue());
+		
+	}
+
+	public void attributeReplaced(HttpSessionBindingEvent ev) {
+		System.out.println("replace: " + ev.getClass().getSimpleName() + POINTS
+				+ ev.getName() + POINTS + ev.getValue());
+	}
+}

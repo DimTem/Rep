@@ -1,0 +1,26 @@
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>Set operations</title>
+</head>
+<body>
+<form action="/SummaryTask4/Patient" method="post">
+		<table>
+			<tr>
+				<th>id</th>
+				<th>operations</th>
+			</tr>
+			<tr>
+
+				<!-- <td><input type="text" name="OLDTId"></td> -->
+				<td><input type="text" name="OpId"></td>
+				<td><input type="text" name="OpOperations"></td>
+			</tr>
+		</table>
+		<input type="submit" name="Opsubmit" value="Set">
+	</form>
+</body>
+</html>

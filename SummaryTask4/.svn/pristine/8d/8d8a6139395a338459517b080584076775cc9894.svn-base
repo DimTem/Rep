@@ -1,0 +1,23 @@
+package ua.nure.bratiuschenko.SummaryTask4.dao;
+
+import java.util.List;
+
+import ua.nure.bratiuschenko.SummaryTask4.domain.Doctor;
+
+public interface DoctorDAO {
+	List<Doctor> findAll();
+	List<Doctor> findDoctorsByCategory(String category);
+	List<Doctor> finDoctorsBySurname(String surname);
+	int findNOPSurgeons();
+	int findNOPTherapeutist();
+	int findNOPDentist();
+	int findNOPSurgeonT();
+	int findNOPNurse(int idOfAttendingMedicalDoctor);
+	int findNOPNurse();
+	int findNOPNurseT();
+	int findNOPGynaecologist();
+	int findNOPNeuropathologist();
+	int findNOPPsychologist();
+	int findNOPOtolaryngologistt();
+	List<Doctor> finDoctorsByNumberOfPatients(String numberOfPAtients);
+}

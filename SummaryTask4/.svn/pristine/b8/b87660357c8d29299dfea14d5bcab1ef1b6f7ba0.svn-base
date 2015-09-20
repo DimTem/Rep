@@ -1,0 +1,112 @@
+package ua.nure.bratiuschenko.SummaryTask4.web.controllers;
+
+import java.io.IOException;
+import java.util.List;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import ua.nure.bratiuschenko.SummaryTask4.dao.DoctorDAOImpl;
+import ua.nure.bratiuschenko.SummaryTask4.dao.PatientDAO;
+import ua.nure.bratiuschenko.SummaryTask4.dao.PatientDAOImpl;
+import ua.nure.bratiuschenko.SummaryTask4.domain.CollectionPatient;
+import ua.nure.bratiuschenko.SummaryTask4.domain.Patient;
+import ua.nure.bratiuschenko.SummaryTask4.utils.Connector;
+import ua.nure.bratiuschenko.SummaryTask4.web.util.TableGenerator;
+
+/**
+ * Servlet implementation class NurseController
+ */
+@WebServlet("/Nurse")
+public class NurseController extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+	private PatientDAO patientDAO;
+	private DoctorDAOImpl doctorDAO;
+
+    /**
+     * @see HttpServlet#HttpServlet()
+     */
+    public NurseController() {
+		patientDAO = new PatientDAOImpl(Connector.getConnection());
+		doctorDAO = new DoctorDAOImpl(Connector.getConnection());
+
+    }
+
+	/**
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	 */
+	protected void doGet(HttpServletRequest request,
+			HttpServletResponse response) throws ServletException, IOException {
+		Connector cnr = new Connector(Connector.admUser, Connector.admPass);
+		response.setContentType("text/html");
+
+		
+		List<Patient> patients = patientDAO.findAll();
+		String patientsTable = TableGenerator
+				.generatePatientsTableForDoctor(patients);
+		if (request.getParameter("surnamesubmit") == null
+				&& request.getParameter("datesubmit") == null
+				&& request.getParameter("submit") == null
+				&& request.getParameter("check_id") == null) {
+			response.getWriter().print(patientsTable);
+		}
+		response.getWriter()
+				.print("</br>&nbsp;&nbsp;&nbsp;<a href=/SummaryTask4/Nurse>BACK</a>&nbsp;&nbsp;&nbsp;<br>");
+		// response.getWriter().print(patientsTable);
+	
+
+		response.getWriter()
+				.print("<br><form method=\"post\">Check id=<input type=\"text\" name=\"check_id\"> <input type=\"submit\""
+						+ " name=\"submit\" value=\"Confirm\"></form>");
+		if (request.getParameter("submit") != null
+				&& request.getParameter("check_id") != null) {
+			
+//			response.getWriter()
+//			.print("<br><form method=\"post\">Insert id: <input type=\"text\" name=\"UpId\"> <input type=\"submit\""
+//					+ " name=\"Upsubmit\" value=\"Confirm\"></form>");
+//			response.getWriter()
+//			.print("<br><form method=\"post\">Insert medicines: <input type=\"text\" name=\"UpMedicines\"> <input type=\"submit\""
+//					+ " name=\"Upsubmit\" value=\"Confirm\"></form>");
+			
+			response.getWriter()
+			.print("<a href=/SummaryTask4/jsp/Doctor/SetProcedures.jsp>set procedures</a>&nbsp;&nbsp;&nbsp;");
+			response.getWriter()
+			.print("&nbsp;&nbsp;&nbsp;<a href=/SummaryTask4/jsp/Doctor/SetMedicines.jsp>set medicines</a>&nbsp;&nbsp;&nbsp;");
+			// Integer numberOfPatients =
+			// Integer.valueOf(request.getParameter("check_id"));
+			// response.getWriter().print(numberOfPatients);
+
+			Integer doctorId = Integer
+					.valueOf(request.getParameter("check_id"));
+
+			List<Patient> patients2 = doctorDAO.showPatientsForDoctor(doctorId);
+			String doctorsTable1 = TableGenerator
+					.generatePatientsTableForDoctor(patients2);
+			response.getWriter().print(doctorsTable1);
+
+		}
+		String alph = CollectionPatient.byAlphabet(cnr);
+		if (request.getParameter("surnamesubmit") != null) {
+			response.getWriter().print(alph);
+		}
+
+		String date = CollectionPatient.byDateOfBirth(cnr);
+		if (request.getParameter("datesubmit") != null) {
+			response.getWriter().print(date);
+		}
+	}
+
+	/**
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
+	 *      response)
+	 */
+	protected void doPost(HttpServletRequest request,
+			HttpServletResponse response) throws ServletException, IOException {
+		doGet(request, response);
+	}
+
+}
+

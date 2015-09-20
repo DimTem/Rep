@@ -1,0 +1,24 @@
+package ua.nure.bratiuschenko.SummaryTask4.dao;
+
+import java.sql.Connection;
+
+import ua.nure.bratiuschenko.SummaryTask4.domain.User;
+
+public class UserDAOImpl implements UserDAO {
+	
+	private Connection connection;
+	
+	public UserDAOImpl(Connection connection) {
+		super();
+		this.connection = connection;
+	}
+
+
+
+	@Override
+	public User getUserByCredetials(String login, String pass) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+}

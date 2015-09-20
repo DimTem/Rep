@@ -1,0 +1,31 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="ISO-8859-1"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Doctors by category</title>
+</head>
+<body>
+	<h2>Categories of doctors</h2>
+	<form action="/SummaryTask4/Doctor" method="post">
+		<input type="submit" name="dsubmit" value="Dentists"> <br>
+		<p>
+			<input type="submit" name="gsubmit" value="Gynaecologists"> <br>
+		<p>
+			<input type="submit" name="nsubmit" value="Nurses"> <br>
+		<p>
+			<input type="submit" name="neursubmit" value="Neuropathologists">
+			<br>
+		<p>
+			<input type="submit" name="osubmit" value="Otolaryngologists">
+			<br>
+		<p>
+			<input type="submit" name="psubmit" value="Psychologists"> <br>
+		<p>
+		<p>
+		<input type="submit" name="tsubmit" value="Therapeutists">
+			<br>
+	</form>
+</body>
+</html>

@@ -1,0 +1,49 @@
+package ua.nure.bratiuschenko.SummaryTask4.web.util;
+
+import java.util.List;
+
+import ua.nure.bratiuschenko.SummaryTask4.domain.Doctor;
+import ua.nure.bratiuschenko.SummaryTask4.domain.Patient;
+
+public class TableGenerator {
+
+	public static String generateDoctorsTable(List<Doctor> doctors) {
+		StringBuilder result = new StringBuilder(
+				"<h3>DOCTORS</h3>"
+						+ "<table border=\"1\"><tr><th><button>id</button></th><th><form action=\"/SummaryTask4/Doctor\" method=\"post\"><input type=\"submit\" name=\"sortDatesubmit\" value=\"surname\"></form></a></th><th><button>name</button></th><th><button>patronymic</button></th><th><button>category</button></th><th><form action=\"/SummaryTask4/Doctor\" method=\"post\"><input type=\"submit\" name=\"sortsubmit\" value=\"date of birth\"></form></a></th><th><button>phone</button></th><th><button>number of patients</button></th>");
+		for (Doctor doctor : doctors) {
+			
+			result.append("<tr><td>" + doctor.getId() + "</td>");
+			result.append("<td>" + doctor.getSurname() + "</td>");
+			result.append("<td>" + doctor.getName() + "</td>");
+			result.append("<td>" + doctor.getPatronymic() + "</td>");
+			result.append("<td>" + doctor.getCategory() + "</td>");
+			result.append("<td>" + doctor.getDateOfBirth() + "</td>");
+			result.append("<td>" + doctor.getPhone() + "</td>");
+			result.append("<td>" + doctor.getNumberOfPatients() + "</td></tr>");
+		}
+		result.append("</table>");
+		return result.toString();
+	}
+
+	public static String generatePatientsTable(List<Patient> patients) {
+		StringBuilder result = new StringBuilder(
+				"<h3>PATIENTS</h3>"
+						+ "<table border=\"1\"><tr><th>id</th><th><form action=\"/SummaryTask4/Patient\" method=\"post\"><input type=\"submit\" name=\"asubmit\" value=\"surname\"></form></a></th><th>name</th><th>patronymic</th><th><form action=\"/SummaryTask4/Patient\" method=\"post\"><input type=\"submit\" name=\"dsubmit\" value=\"date of birth\"></form></a></th><th>id of attending medical doctor</th><th>procedures</th><th>medicines</th><th>operations</th>");
+		for (Patient patient : patients) {
+			result.append("<tr><td>" + patient.getId() + "</td>");
+			result.append("<td>" + patient.getSurname() + "</td>");
+			result.append("<td>" + patient.getName() + "</td>");
+			result.append("<td>" + patient.getPatronymic() + "</td>");
+			result.append("<td>" + patient.getDateOfBirth() + "</td>");
+			result.append("<td>" + patient.getIdOfAttendingMedicalDoctor()
+					+ "</td>");
+			result.append("<td>" + patient.getProcedures() + "</td>");
+			result.append("<td>" + patient.getMedicines() + "</td>");
+			result.append("<td>" + patient.getOperations() + "</td></tr>");
+		}
+		result.append("</table>");
+		return result.toString();
+	}
+
+}

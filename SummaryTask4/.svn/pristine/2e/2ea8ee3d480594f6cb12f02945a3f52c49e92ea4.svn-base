@@ -1,0 +1,233 @@
+package ua.nure.bratiuschenko.SummaryTask4.web.controllers;
+
+import java.io.IOException;
+import java.sql.Date;
+import java.util.List;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import ua.nure.bratiuschenko.SummaryTask4.dao.PatientDAO;
+import ua.nure.bratiuschenko.SummaryTask4.dao.PatientDAOImpl;
+import ua.nure.bratiuschenko.SummaryTask4.domain.CollectionPatient;
+import ua.nure.bratiuschenko.SummaryTask4.domain.Patient;
+import ua.nure.bratiuschenko.SummaryTask4.exception.DBException;
+import ua.nure.bratiuschenko.SummaryTask4.utils.Connector;
+import ua.nure.bratiuschenko.SummaryTask4.web.util.TableGenerator;
+
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.PdfWriter;
+
+import org.apache.log4j.Logger;
+
+/**
+ * Servlet implementation class Patient
+ */
+@WebServlet("/Patient")
+public class PatientController extends HttpServlet {
+	private static long serialVersionUID = 1L;
+	private PatientDAO patientDAO;
+	private static final Logger LOG = Logger.getLogger(PatientController.class);
+	private static final String DOCTOR_FOR_DOCTOR = "/SummaryTask4/DoctorForDoctor";
+	private static final String PATIENT = "/SummaryTask4/Patient";
+
+	public PatientController() {
+		super();
+		patientDAO = new PatientDAOImpl(Connector.getConnection());
+	}
+
+	protected void delete(HttpServletRequest request,
+			HttpServletResponse response, Connector cnr) throws IOException {
+		response.getWriter()
+				.print("<br><form method=\"post\">DELETE: ID=<input type=\"text\" name=\"delete_id\"> <input type=\"submit\""
+						+ " name=\"submit\" value=\"Delete\"></form>");
+		if (request.getParameter("submit") != null
+				&& request.getParameter("delete_id") != null) {
+			boolean result = PatientDAOImpl.delete(
+					Integer.valueOf(request.getParameter("delete_id")), cnr);
+			response.sendRedirect(PATIENT);
+			if (!result) {
+				response.getWriter().print("<p>Something gone wrong</p>");
+
+			}
+		}
+	}
+
+	protected void doGet(HttpServletRequest request,
+			HttpServletResponse response) throws ServletException, IOException {
+		Connector cnr = new Connector(Connector.ADM_USER, Connector.ADM_PASS);
+		response.setContentType("text/html");
+		/**
+		 * // response.setContentType(
+		 * "src/ua/nure/bratiuschenko/SummaryTask4/pdfFiles/fileFromController.pdf"
+		 * );
+		 *
+		 */
+
+		List<Patient> patients;
+		try {
+			patients = patientDAO.findAll();
+			String patientsTable = TableGenerator
+					.generatePatientsTable(patients);
+			if (request.getParameter("allsubmit") == null
+					&& request.getParameter("asubmit") == null
+					&& request.getParameter("dsubmit") == null) {
+				response.getWriter().print(patientsTable);
+			}
+
+		} catch (DBException e) {
+			LOG.error("can not find all ", e);
+		}
+		response.setContentType("text/html");
+		response.getWriter()
+				.print("&nbsp;&nbsp;&nbsp;<a href=/SummaryTask4/jsp/admin/Patients/AddPatient.jsp>add patient</a>&nbsp;&nbsp;&nbsp;");
+		response.getWriter()
+				.print("<a href=/SummaryTask4/jsp/admin/Patients/UpdatePatient.jsp>Update patient</a>&nbsp;&nbsp;&nbsp;<br>");
+		response.getWriter()
+				.print("</br>&nbsp;&nbsp;&nbsp;<a href=/SummaryTask4/Patient>BACK</a>&nbsp;&nbsp;&nbsp;");
+		response.getWriter()
+				.print("&nbsp;&nbsp;&nbsp;<a href=/SummaryTask4/jsp/admin/Patients/Discharge.jsp>Discharge from the hospital</a>&nbsp;&nbsp;&nbsp;<br>");
+		delete(request, response, cnr);
+		String alph = CollectionPatient.byAlphabet(cnr);
+		if (request.getParameter("asubmit") != null) {
+			response.getWriter().print(alph);
+			LOG.debug("show patients sorted by alphabet");
+
+		}
+		String date = CollectionPatient.byDateOfBirth(cnr);
+		if (request.getParameter("dsubmit") != null) {
+			response.getWriter().print(date);
+			LOG.debug("show patients sorted by date of birth");
+		}
+
+		if (request.getParameter("psubmit") != null) {
+
+			Integer id = Integer.valueOf(request.getParameter("a_id"));
+			String surname = request.getParameter("a_surname");
+			String name = request.getParameter("a_name");
+			String patronymic = request.getParameter("a_patronymic");
+			Date dateOfBirth = Date.valueOf(request
+					.getParameter("a_dateOfBirth"));
+			Integer idOfAttendingMedicalDoctor = Integer.valueOf(request
+					.getParameter("a_idOfAttendingMedicalDoctor"));
+			String procedures = request.getParameter("a_procedures");
+			String medicines = request.getParameter("a_medicines");
+			String operations = request.getParameter("a_operations");
+			String diagnosis = request.getParameter("a_diagnosis");
+			String status = request.getParameter("a_status");
+			PatientDAOImpl.create(id, surname, name, patronymic, dateOfBirth,
+					idOfAttendingMedicalDoctor, procedures, medicines,
+					operations, diagnosis, status, cnr);
+			LOG.debug("create patient");
+
+			response.sendRedirect(PATIENT);
+		}
+		if (request.getParameter("isubmit") != null) {
+
+			Integer id = Integer.valueOf(request.getParameter("i_id"));
+			String surname = request.getParameter("i_surname");
+			String name = request.getParameter("i_name");
+			String patronymic = request.getParameter("i_patronymic");
+			Date dateOfBirth = Date.valueOf(request
+					.getParameter("i_dateOfBirth"));
+			Integer idOfAttendingMedicalDoctor = Integer.valueOf(request
+					.getParameter("i_idOfAttendingMedicalDoctor"));
+			String procedures = request.getParameter("i_procedures");
+			String medicines = request.getParameter("i_medicines");
+			String operations = request.getParameter("i_operations");
+			String diagnosis = request.getParameter("i_diagnosis");
+			String status = request.getParameter("i_status");
+
+			PatientDAOImpl.update(id, surname, name, patronymic, dateOfBirth,
+					idOfAttendingMedicalDoctor, procedures, medicines,
+					operations, diagnosis, status, cnr);
+			LOG.debug("update patient");
+			response.sendRedirect(PATIENT);
+		}
+		if (request.getParameter("Upsubmit") != null) {
+			Integer id = Integer.valueOf(request.getParameter("UpId"));
+			String medicines = request.getParameter("UpMedicines");
+			try {
+				PatientDAOImpl.updateMedicines(id, medicines, cnr);
+				LOG.debug("update medicines");
+			} catch (DBException e) {
+				LOG.error("can not udate medicines", e);
+			}
+			response.sendRedirect(DOCTOR_FOR_DOCTOR);
+		}
+
+		if (request.getParameter("Opsubmit") != null) {
+			Integer id = Integer.valueOf(request.getParameter("OpId"));
+			String operations = request.getParameter("OpOperations");
+			try {
+				PatientDAOImpl.updateOperations(id, operations, cnr);
+				LOG.debug("update operations");
+			} catch (DBException e) {
+				LOG.error("can not udate operations", e);
+			}
+			response.sendRedirect(DOCTOR_FOR_DOCTOR);
+		}
+
+		if (request.getParameter("Prsubmit") != null) {
+			Integer id = Integer.valueOf(request.getParameter("PrId"));
+			String procedures = request.getParameter("PrProcedures");
+			try {
+				PatientDAOImpl.updateProcedures(id, procedures, cnr);
+				LOG.debug("update procedures");
+			} catch (DBException e) {
+				LOG.error("can not udate procedures", e);
+			}
+			response.sendRedirect(DOCTOR_FOR_DOCTOR);
+		}
+		if (request.getParameter("Dsubmit") != null) {
+			Integer id = Integer.valueOf(request.getParameter("DId"));
+			String diagnosis = request.getParameter("DDiagnosis");
+			try {
+				PatientDAOImpl.updateDiagnosis(id, diagnosis, cnr);
+				LOG.debug("update diagnosis");
+			} catch (DBException e) {
+				LOG.error("can not udate diagnosis", e);
+			}
+			response.sendRedirect(DOCTOR_FOR_DOCTOR);
+		}
+		if (request.getParameter("dissubmit") != null) {
+			Integer id = Integer.valueOf(request.getParameter("d_id"));
+			String status = request.getParameter("status");
+			String finalDiagn = request.getParameter("d_diagnos");
+			try {
+				PatientDAOImpl.discharge(id, status, finalDiagn, cnr);
+				LOG.debug("discharge");
+			} catch (DBException e) {
+				LOG.error("can not discharge ", e);
+
+			}
+			/**
+			 * // try { // response.setContentType("application/pdf"); // //
+			 * step 1 // Document document = new Document(); // // step 2 //
+			 * PdfWriter.getInstance(document, response.getOutputStream()); //
+			 * // step 3 // document.open(); // // step 4 // document.add(new
+			 * Paragraph("Hello World")); // // step 5 // document.close(); // }
+			 * catch (DocumentException de) { // throw new
+			 * IOException(de.getMessage()); // } // // // /** // * A serial
+			 * version uid serialVersionUID = 4262544639420765610L;
+			 */
+
+			response.sendRedirect("/SummaryTask4/Patient");
+		}
+	}
+
+	/**
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
+	 *      response)
+	 */
+	protected void doPost(HttpServletRequest request,
+			HttpServletResponse response) throws ServletException, IOException {
+		doGet(request, response);
+	}
+
+}

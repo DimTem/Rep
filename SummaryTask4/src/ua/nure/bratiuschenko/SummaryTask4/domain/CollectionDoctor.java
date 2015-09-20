@@ -1,0 +1,365 @@
+package ua.nure.bratiuschenko.SummaryTask4.domain;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+import ua.nure.bratiuschenko.SummaryTask4.utils.Connector;
+
+public class CollectionDoctor {
+	public static final String SQL_SELECT_ALL_DOCTORS = "SELECT * FROM doctor";
+	public static final String SQL_SELECT_ALL_DENTISTS = "SELECT * FROM doctor WHERE category = 'dentist'";
+	public static final String SQL_SELECT_ALL_GYNAECOLOGISTS = "SELECT * FROM doctor WHERE category = 'gynaecologist'";
+	public static final String SQL_SELECT_ALL_NURSES = "SELECT * FROM doctor WHERE category = 'nurse'";
+	public static final String SQL_SELECT_ALL_NEUROPATHOLOGISTS = "SELECT * FROM doctor WHERE category = 'neuropathologist'";
+	public static final String SQL_SELECT_ALL_OTOLARYNGOLOGISTS = "SELECT * FROM doctor WHERE category = 'otolaryngologist'";
+	public static final String SQL_SELECT_ALL_PSYCHOLOGISTS = "SELECT * FROM doctor WHERE category = 'psychologist'";
+	public static final String SQL_SELECT_ALL_THERAPEUTISTS = "SELECT * FROM doctor WHERE category = 'therapeutist'";
+	public static final String SQL_SORTBYDATE_ALL_DOCTORS = " SELECT * FROM doctor ORDER BY `date of birth` ASC";
+	public static final String SQL_SORTBYSURNAME_ALL_DOCTORS = " SELECT * FROM doctor ORDER BY `surname` ASC";
+	public static final String SQL_SORTBYNUMBROFPATIENTS_ALL_DOCTORS = " SELECT * FROM doctor ORDER BY `number of patients` ASC";
+
+	private static final String TR = "<tr>";
+	private static final String TD = "<td>";
+	private static final String TDE = "</td>";
+	private static final String TRE = "</tr>";
+	private static final String TABLE_END = "</table>";
+	private static final String SQL_EXC = "SQL exception (request or table failed): ";
+	private static final String TABLE = "<table border=\"1\"><tr><th>id</th><th>surname</th><th>name</th><th>patronymic</th><th>category</th><th>date of birth</th><th>phone</th><th>number of patients</th>";
+
+	
+	public static String findDoctorBySurname(Connector cnr) {
+		StringBuilder result = new StringBuilder("<h3>DOCTORS</h3>" + TABLE);
+		Statement st = null;
+		try {
+			st = cnr.getStatement();
+			ResultSet rs = st.executeQuery(SQL_SELECT_ALL_DOCTORS);
+			while (rs.next()) {
+				result.append(TR + TD + rs.getInt(1) + TDE);
+				result.append(TD + rs.getString(2) + TDE);
+				result.append(TD + rs.getString(3) + TDE);
+				result.append(TD + rs.getString(4) + TDE);
+				result.append(TD + rs.getString(5) + TDE);
+				result.append(TD + rs.getDate(6) + TDE);
+				result.append(TD + rs.getString(7) + TDE);
+				result.append(TD + rs.getInt(8) + TDE + TRE);
+			}
+			result.append("</table>");
+		} catch (SQLException e) {
+			System.err.println(SQL_EXC + e);
+		} finally {
+			if (st != null) {
+				cnr.closeStatement(st);
+			}
+		}
+		return result.toString();
+	}
+	
+	
+	
+	public static String findAll(Connector cnr) {
+		StringBuilder result = new StringBuilder("<h3>DOCTORS</h3>" + TABLE);
+		Statement st = null;
+		try {
+			st = cnr.getStatement();
+			ResultSet rs = st.executeQuery(SQL_SELECT_ALL_DOCTORS);
+			while (rs.next()) {
+				result.append(TR + TD + rs.getInt(1) + TDE);
+				result.append(TD + rs.getString(2) + TDE);
+				result.append(TD + rs.getString(3) + TDE);
+				result.append(TD + rs.getString(4) + TDE);
+				result.append(TD + rs.getString(5) + TDE);
+				result.append(TD + rs.getDate(6) + TDE);
+				result.append(TD + rs.getString(7) + TDE);
+				result.append(TD + rs.getInt(8) + TDE + TRE);
+			}
+			result.append("</table>");
+		} catch (SQLException e) {
+			System.err.println(SQL_EXC + e);
+		} finally {
+			if (st != null) {
+				cnr.closeStatement(st);
+			}
+		}
+		return result.toString();
+	}
+
+	public static String findDentists(Connector cnr) {
+		StringBuilder result = new StringBuilder("<h3>DENTISTS</h3>" + TABLE);
+		Statement st = null;
+		try {
+			st = cnr.getStatement();
+			ResultSet rs = st.executeQuery(SQL_SELECT_ALL_DENTISTS);
+			while (rs.next()) {
+				result.append(TR + TD + rs.getInt(1) + TDE);
+				result.append(TD + rs.getString(2) + TDE);
+				result.append(TD + rs.getString(3) + TDE);
+				result.append(TD + rs.getString(4) + TDE);
+				result.append(TD + rs.getString(5) + TDE);
+				result.append(TD + rs.getDate(6) + TDE);
+				result.append(TD + rs.getString(7) + TDE);
+				result.append(TD + rs.getInt(8) + TDE + TRE);
+			}
+			result.append(TABLE_END);
+		} catch (SQLException e) {
+			System.err.println(SQL_EXC + e);
+		} finally {
+			if (st != null) {
+				cnr.closeStatement(st);
+			}
+		}
+		return result.toString();
+	}
+
+	public static String findGynaecologists(Connector cnr) {
+		StringBuilder result = new StringBuilder("<h3>GYNAECOLOGISTS</h3>"
+				+ TABLE);
+		Statement st = null;
+		try {
+			st = cnr.getStatement();
+			ResultSet rs = st.executeQuery(SQL_SELECT_ALL_GYNAECOLOGISTS);
+			while (rs.next()) {
+				result.append(TR + TD + rs.getInt(1) + TDE);
+				result.append(TD + rs.getString(2) + TDE);
+				result.append(TD + rs.getString(3) + TDE);
+				result.append(TD + rs.getString(4) + TDE);
+				result.append(TD + rs.getString(5) + TDE);
+				result.append(TD + rs.getDate(6) + TDE);
+				result.append(TD + rs.getString(7) + TDE);
+				result.append(TD + rs.getInt(8) + TDE + TRE);
+			}
+			result.append(TABLE_END);
+		} catch (SQLException e) {
+			System.err.println(SQL_EXC + e);
+		} finally {
+			if (st != null) {
+				cnr.closeStatement(st);
+			}
+		}
+		return result.toString();
+	}
+
+	public static String findNurses(Connector cnr) {
+		StringBuilder result = new StringBuilder("<h3>NURSES</h3>" + TABLE);
+		Statement st = null;
+		try {
+			st = cnr.getStatement();
+			ResultSet rs = st.executeQuery(SQL_SELECT_ALL_NURSES);
+			while (rs.next()) {
+				result.append(TR + TD + rs.getInt(1) + TDE);
+				result.append(TD + rs.getString(2) + TDE);
+				result.append(TD + rs.getString(3) + TDE);
+				result.append(TD + rs.getString(4) + TDE);
+				result.append(TD + rs.getString(5) + TDE);
+				result.append(TD + rs.getDate(6) + TDE);
+				result.append(TD + rs.getString(7) + TDE);
+				result.append(TD + rs.getInt(8) + TDE + TRE);
+			}
+			result.append("</table>");
+		} catch (SQLException e) {
+			System.err.println(SQL_EXC + e);
+		} finally {
+			if (st != null) {
+				cnr.closeStatement(st);
+			}
+		}
+		return result.toString();
+	}
+
+	public static String findNeuropathologists(Connector cnr) {
+		StringBuilder result = new StringBuilder("<h3>NEUROPATHOLOGISTS</h3>"
+				+ TABLE);
+		Statement st = null;
+		try {
+			st = cnr.getStatement();
+			ResultSet rs = st.executeQuery(SQL_SELECT_ALL_NEUROPATHOLOGISTS);
+			while (rs.next()) {
+				result.append(TR + TD + rs.getInt(1) + TDE);
+				result.append(TD + rs.getString(2) + TDE);
+				result.append(TD + rs.getString(3) + TDE);
+				result.append(TD + rs.getString(4) + TDE);
+				result.append(TD + rs.getString(5) + TDE);
+				result.append(TD + rs.getDate(6) + TDE);
+				result.append(TD + rs.getString(7) + TDE);
+				result.append(TD + rs.getInt(8) + TDE + TRE);
+			}
+			result.append(TABLE_END);
+		} catch (SQLException e) {
+			System.err.println(SQL_EXC + e);
+		} finally {
+			if (st != null) {
+				cnr.closeStatement(st);
+			}
+		}
+		return result.toString();
+	}
+
+	public static String findOtolaryngologists(Connector cnr) {
+		StringBuilder result = new StringBuilder("<h3>OTOLARYNGOLOGISTS</h3>"
+				+ TABLE);
+		Statement st = null;
+		try {
+			st = cnr.getStatement();
+			ResultSet rs = st.executeQuery(SQL_SELECT_ALL_OTOLARYNGOLOGISTS);
+			while (rs.next()) {
+				result.append(TR + TD + rs.getInt(1) + TDE);
+				result.append(TD + rs.getString(2) + TDE);
+				result.append(TD + rs.getString(3) + TDE);
+				result.append(TD + rs.getString(4) + TDE);
+				result.append(TD + rs.getString(5) + TDE);
+				result.append(TD + rs.getDate(6) + TDE);
+				result.append(TD + rs.getString(7) + TDE);
+				result.append(TD + rs.getInt(8) + TDE + TRE);
+			}
+			result.append(TABLE_END);
+		} catch (SQLException e) {
+			System.err.println(SQL_EXC + e);
+		} finally {
+			if (st != null) {
+				cnr.closeStatement(st);
+			}
+		}
+		return result.toString();
+	}
+
+	public static String findPsychologist(Connector cnr) {
+		StringBuilder result = new StringBuilder("<h3>PSYCHOLOGISTS</h3>"
+				+ TABLE);
+		Statement st = null;
+		try {
+			st = cnr.getStatement();
+			ResultSet rs = st.executeQuery(SQL_SELECT_ALL_PSYCHOLOGISTS);
+			while (rs.next()) {
+				result.append(TR + TD + rs.getInt(1) + TDE);
+				result.append(TD + rs.getString(2) + TDE);
+				result.append(TD + rs.getString(3) + TDE);
+				result.append(TD + rs.getString(4) + TDE);
+				result.append(TD + rs.getString(5) + TDE);
+				result.append(TD + rs.getDate(6) + TDE);
+				result.append(TD + rs.getString(7) + TDE);
+				result.append(TD + rs.getInt(8) + TDE + TRE);
+			}
+			result.append(TABLE_END);
+		} catch (SQLException e) {
+			System.err.println(SQL_EXC + e);
+		} finally {
+			if (st != null) {
+				cnr.closeStatement(st);
+			}
+		}
+		return result.toString();
+	}
+
+	public static String findTherapeutists(Connector cnr) {
+		StringBuilder result = new StringBuilder("<h3>THERAPEUTISTS</h3>"
+				+ TABLE);
+		Statement st = null;
+		try {
+			st = cnr.getStatement();
+			ResultSet rs = st.executeQuery(SQL_SELECT_ALL_THERAPEUTISTS);
+			while (rs.next()) {
+				result.append(TR + TD + rs.getInt(1) + TDE);
+				result.append(TD + rs.getString(2) + TDE);
+				result.append(TD + rs.getString(3) + TDE);
+				result.append(TD + rs.getString(4) + TDE);
+				result.append(TD + rs.getString(5) + TDE);
+				result.append(TD + rs.getDate(6) + TDE);
+				result.append(TD + rs.getString(7) + TDE);
+				result.append(TD + rs.getInt(8) + TDE + TRE);
+			}
+			result.append(TABLE_END);
+		} catch (SQLException e) {
+			System.err.println(SQL_EXC + e);
+		} finally {
+			if (st != null) {
+				cnr.closeStatement(st);
+			}
+		}
+		return result.toString();
+	}
+
+	public static String sortDoctorsByAge(Connector cnr) {
+		StringBuilder result = new StringBuilder(
+				"<h3>SORT BY DATE OF BIRTH</h3>" + TABLE);
+		Statement st = null;
+		try {
+			st = cnr.getStatement();
+			ResultSet rs = st.executeQuery(SQL_SORTBYDATE_ALL_DOCTORS);
+			while (rs.next()) {
+				result.append(TR + TD + rs.getInt(1) + TDE);
+				result.append(TD + rs.getString(2) + TDE);
+				result.append(TD + rs.getString(3) + TDE);
+				result.append(TD + rs.getString(4) + TDE);
+				result.append(TD + rs.getString(5) + TDE);
+				result.append(TD + rs.getDate(6) + TDE);
+				result.append(TD + rs.getString(7) + TDE);
+				result.append(TD + rs.getInt(8) + TDE + TRE);
+			}
+			result.append(TABLE_END);
+		} catch (SQLException e) {
+			System.err.println(SQL_EXC + e);
+		} finally {
+			if (st != null) {
+				cnr.closeStatement(st);
+			}
+		}
+		return result.toString();
+	}
+
+	public static String sortDoctorsBySurname(Connector cnr) {
+		StringBuilder result = new StringBuilder("<h3>SORT BY SURNAME</h3>"
+				+ TABLE);
+		Statement st = null;
+		try {
+			st = cnr.getStatement();
+			ResultSet rs = st.executeQuery(SQL_SORTBYSURNAME_ALL_DOCTORS);
+			while (rs.next()) {
+				result.append(TR + TD + rs.getInt(1) + TDE);
+				result.append(TD + rs.getString(2) + TDE);
+				result.append(TD + rs.getString(3) + TDE);
+				result.append(TD + rs.getString(4) + TDE);
+				result.append(TD + rs.getString(5) + TDE);
+				result.append(TD + rs.getDate(6) + TDE);
+				result.append(TD + rs.getString(7) + TDE);
+				result.append(TD + rs.getInt(8) + TDE + TRE);
+			}
+			result.append(TABLE_END);
+		} catch (SQLException e) {
+			System.err.println(SQL_EXC + e);
+		} finally {
+			if (st != null) {
+				cnr.closeStatement(st);
+			}
+		}
+		return result.toString();
+	}
+
+	public static String sortDoctorsByNOP(Connector cnr) {
+		StringBuilder result = new StringBuilder(
+				"<h3>SORT BY NUMBER OF PATIENTS</h3>" + TABLE);
+		Statement st = null;
+		try {
+			st = cnr.getStatement();
+			ResultSet rs = st
+					.executeQuery(SQL_SORTBYNUMBROFPATIENTS_ALL_DOCTORS);
+			while (rs.next()) {
+				result.append(TR + TD + rs.getInt(1) + TDE);
+				result.append(TD + rs.getString(2) + TDE);
+				result.append(TD + rs.getString(3) + TDE);
+				result.append(TD + rs.getString(4) + TDE);
+				result.append(TD + rs.getString(5) + TDE);
+				result.append(TD + rs.getDate(6) + TDE);
+				result.append(TD + rs.getString(7) + TDE);
+				result.append(TD + rs.getInt(8) + TDE + TRE);
+			}
+			result.append(TABLE_END);
+		} catch (SQLException e) {
+			System.err.println(SQL_EXC + e);
+		} finally {
+			if (st != null) {
+				cnr.closeStatement(st);
+			}
+		}
+		return result.toString();
+	}
+}

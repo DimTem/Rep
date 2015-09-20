@@ -1,0 +1,569 @@
+package ua.nure.bratiuschenko.SummaryTask4.dao;
+
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.log4j.Logger;
+
+import ua.nure.bratiuschenko.SummaryTask4.domain.Doctor;
+import ua.nure.bratiuschenko.SummaryTask4.domain.Patient;
+import ua.nure.bratiuschenko.SummaryTask4.exception.DBException;
+import ua.nure.bratiuschenko.SummaryTask4.utils.Connector;
+
+public class DoctorDAOImpl implements DoctorDAO {
+	private static final Logger LOG = Logger.getLogger(DoctorDAOImpl.class);
+
+	public static final String SQL_SELECT_ALL_DOCTORS = "SELECT * FROM doctor";
+	public static final String SQL_SELECT_ALL_DOCTORS_BY_CATEGORY = "SELECT * FROM doctor where category = ?";
+	public static final String SQL_SORTBYSURNAME_ALL_DOCTORS = " SELECT * FROM doctor ORDER BY `surname` ASC";
+	static String sql = "INSERT INTO `jtj-948`.`doctor` (id,surname,name,patronymic,category,`date of birth`,telephone,`number of patients`)"
+			+ "VALUES (?,?,?,?,?,?,?,?)";
+	private static final String SQL_DELETE_FROM_DOCTOR = "DELETE FROM doctor where id=?";
+
+	private static final String SQL_UPDATE_FROM_DOCOTOR = "UPDATE `jtj-948`.`doctor` SET `id`=?, `surname`=?, `name`=?, `patronymic`=?, `category`=?, `date of birth`=?,`telephone`=?, `number of patients`=?  WHERE `id`=?";
+	private static final String SQL_COUNT_PATIENTS_OF_SURGEON = " SELECT  COUNT(`id`)  FROM `jtj-948`.`patient`WHERE `id of attending medical doctor`=1";
+	private static final String SQL_UPDATE_PATIENTS = "UPDATE `jtj-948`.`doctor` SET `number of patients`=?  WHERE `id`=?";
+
+	private static final String SQL_COUNT_PATIENTS_OF_THERAPEUTIST = " SELECT  COUNT(`id`)  FROM `jtj-948`.`patient`WHERE `id of attending medical doctor`=2";
+	private static final String SQL_COUNT_PATIENTS_OF_DENTIST = " SELECT  COUNT(`id`)  FROM `jtj-948`.`patient`WHERE `id of attending medical doctor`=3";
+	private static final String SQL_COUNT_PATIENTS_OF_SURGEONT = " SELECT  COUNT(`id`)  FROM `jtj-948`.`patient`WHERE `id of attending medical doctor`=4";
+	/*
+	 * private static final String SQL_COUNT_PATIENTS =
+	 */
+	/*
+	 * " SELECT  COUNT(`id`)  FROM `jtj-948`.`patient`WHERE `id of attending medical doctor`=?"
+	 * ;
+	 */
+	private static final String SQL_COUNT_PATIENTS_OF_NURSE = " SELECT  COUNT(`id`)  FROM `jtj-948`.`patient`WHERE `id of attending medical doctor`=5";
+	private static final String SQL_COUNT_PATIENTS_OF_NURSET = " SELECT  COUNT(`id`)  FROM `jtj-948`.`patient`WHERE `id of attending medical doctor`=6";
+	private static final String SQL_COUNT_PATIENTS_OF_GYN = " SELECT  COUNT(`id`)  FROM `jtj-948`.`patient`WHERE `id of attending medical doctor`=7";
+	private static final String SQL_COUNT_PATIENTS_OF_NEURO = " SELECT  COUNT(`id`)  FROM `jtj-948`.`patient`WHERE `id of attending medical doctor`=8";
+	private static final String SQL_COUNT_PATIENTS_OF_PSYCHO = " SELECT  COUNT(`id`)  FROM `jtj-948`.`patient`WHERE `id of attending medical doctor`=9";
+	private static final String SQL_COUNT_PATIENTS_OF_OTOLAR = " SELECT  COUNT(`id`)  FROM `jtj-948`.`patient`WHERE `id of attending medical doctor`=10";
+	public static final String SQL_SORTBYNUMBROFPATIENTS_ALL_DOCTORS = " SELECT * FROM doctor ORDER BY `number of patients` ASC";
+
+	/*
+	 * For Doctors when you login as doctor
+	 */
+	public static final String SQL_SELECT_PATIENTS_FOR_DOCTORS = "SELECT * FROM `jtj-948`.`patient` WHERE `id of attending medical doctor`=?";
+	public static final String SQL_SELECT_ALL_PATIENTS = "SELECT * FROM `patient` ";
+
+	private Connection connection;
+
+	public DoctorDAOImpl(Connection connection) {
+		this.connection = connection;
+	}
+
+	@Override
+	public List<Doctor> finDoctorsByNumberOfPatients(String numberOfPAtients)
+			throws DBException {
+		List<Doctor> doctors = new ArrayList<Doctor>();
+		DBManager manager = DBManager.getInstance();
+		Statement st = null;
+		LOG.trace("sort by number of patients started");
+		try (PreparedStatement st1 = connection
+				.prepareStatement(SQL_SORTBYNUMBROFPATIENTS_ALL_DOCTORS)) {
+			st1.setString(1, numberOfPAtients);
+			ResultSet rs1 = st1.executeQuery(SQL_SELECT_ALL_DOCTORS);
+			LOG.trace("sort by number of patients finished");
+			while (rs1.next()) {
+				Doctor doctor = extractDoctorFromResultSet(rs1);
+				doctors.add(doctor);
+			}
+		} catch (SQLException e) {
+			LOG.error("can not find Doctors by numer of patients", e);
+			throw new DBException("can not find Doctors by numer of patients",
+					e);
+		} finally {
+			manager.close(st);
+		}
+		return doctors;
+	}
+
+	@Override
+	public int findNOPOtolaryngologistt() throws DBException {
+		Statement st = null;
+		LOG.trace("find by number of otolaryngologists started");
+		DBManager manager = DBManager.getInstance();
+		int doctors = 0;
+		try (Statement st1 = connection.createStatement()) {
+			ResultSet rs = st1.executeQuery(SQL_COUNT_PATIENTS_OF_OTOLAR);
+			LOG.trace("find by number of otolaryngologists finished");
+			while (rs.next()) {
+				Doctor doctor = new Doctor();
+				doctor.setNumberOfPatients(rs.getInt(1));
+				doctors = doctor.getNumberOfPatients();
+			}
+		} catch (SQLException e) {
+			throw new DBException(
+					"can not find by number of otolaryngologists", e);
+		} finally {
+			manager.close(st);
+		}
+		return doctors;
+	}
+
+	@Override
+	public int findNOPPsychologist() throws DBException {
+		DBManager manager = DBManager.getInstance();
+		Statement st = null;
+		int doctors = 0;
+		LOG.trace("find by number of psychologists started");
+		try (Statement st1 = connection.createStatement()) {
+			ResultSet rs = st1.executeQuery(SQL_COUNT_PATIENTS_OF_PSYCHO);
+			LOG.trace("find by number of psychologists finished");
+			while (rs.next()) {
+				Doctor doctor = new Doctor();
+				doctor.setNumberOfPatients(rs.getInt(1));
+				doctors = doctor.getNumberOfPatients();
+
+			}
+		} catch (SQLException e) {
+			LOG.error("can not find Doctors by numer of psychologists", e);
+			throw new DBException("can not find by  number of psychologists", e);
+		} finally {
+			manager.close(st);
+		}
+		return doctors;
+	}
+
+	@Override
+	public int findNOPNeuropathologist() throws DBException {
+		DBManager manager = DBManager.getInstance();
+		Statement st = null;
+		int doctors = 0;
+		LOG.trace("find by number of neuropathologists started");
+
+		try (Statement st1 = connection.createStatement()) {
+			ResultSet rs = st1.executeQuery(SQL_COUNT_PATIENTS_OF_NEURO);
+			LOG.trace("find by number of neuropathologists finished");
+			while (rs.next()) {
+				Doctor doctor = new Doctor();
+				doctor.setNumberOfPatients(rs.getInt(1));
+				doctors = doctor.getNumberOfPatients();
+
+			}
+		} catch (SQLException e) {
+			throw new DBException(
+					"can not find by  number of neuropathologists", e);
+		} finally {
+			manager.close(st);
+		}
+		return doctors;
+	}
+
+	@Override
+	public int findNOPGynaecologist() throws DBException {
+		DBManager manager = DBManager.getInstance();
+		Statement st = null;
+		int doctors = 0;
+		LOG.trace("find by number of gynaecologists started");
+		try (Statement st1 = connection.createStatement()) {
+			ResultSet rs = st1.executeQuery(SQL_COUNT_PATIENTS_OF_GYN);
+			LOG.trace("find by number of gynaecologists finished");
+			while (rs.next()) {
+				Doctor doctor = new Doctor();
+				doctor.setNumberOfPatients(rs.getInt(1));
+				doctors = doctor.getNumberOfPatients();
+
+			}
+		} catch (SQLException e) {
+			throw new DBException("can not find by  number of gynaecologists",
+					e);
+		} finally {
+			manager.close(st);
+		}
+		return doctors;
+	}
+
+	@Override
+	public int findNOPNurseT() throws DBException {
+		DBManager manager = DBManager.getInstance();
+		Statement st = null;
+		int doctors = 0;
+		LOG.trace("find by number of nurses started");
+		try (Statement st1 = connection.createStatement()) {
+			ResultSet rs = st1.executeQuery(SQL_COUNT_PATIENTS_OF_NURSET);
+			LOG.trace("find by number of nurses finished");
+			while (rs.next()) {
+				Doctor doctor = new Doctor();
+				doctor.setNumberOfPatients(rs.getInt(1));
+				doctors = doctor.getNumberOfPatients();
+
+			}
+		} catch (SQLException e) {
+			throw new DBException("can not find by  number of nurses", e);
+		} finally {
+			manager.close(st);
+		}
+		return doctors;
+	}
+
+	@Override
+	public int findNOPNurse() throws DBException {
+		int doctors = 0;
+		DBManager manager = DBManager.getInstance();
+		Statement st = null;
+		LOG.trace("find by number of nurses started");
+		try (Statement st1 = connection.createStatement()) {
+			ResultSet rs = st1.executeQuery(SQL_COUNT_PATIENTS_OF_NURSE);
+			LOG.trace("find by number of nurses finished");
+			while (rs.next()) {
+				Doctor doctor = new Doctor();
+				doctor.setNumberOfPatients(rs.getInt(1));
+				doctors = doctor.getNumberOfPatients();
+
+			}
+		} catch (SQLException e) {
+			throw new DBException("can not find by  number of nurses", e);
+		} finally {
+			manager.close(st);
+		}
+		return doctors;
+	}
+
+	/*
+	 * TODO: FOr цикл бомбануть все!
+	 * 
+	 * @Override public int findNOPNurse(int idOfAttendingMedicalDoctor) { int
+	 * doctors=0; try (Statement st = connection.createStatement()) { ResultSet
+	 * rs = st.executeQuery(SQL_COUNT_PATIENTS); while (rs.next()) { Doctor
+	 * doctor = new Doctor(); doctor.setNumberOfPatients(rs.getInt(1)); //
+	 * Doctor doctor = extractDoctorFromResultSet(rs); doctors =
+	 * doctor.getNumberOfPatients();
+	 * 
+	 * } } catch (SQLException e) { // TODO: log with error level
+	 * System.err.println("SQL exception (request or table failed): " + e); }
+	 * return doctors; }
+	 */
+	@Override
+	public int findNOPSurgeonT() throws DBException {
+		int doctors = 0;
+		DBManager manager = DBManager.getInstance();
+		Statement st = null;
+		LOG.trace("find by number of surgeons started");
+		try (Statement st1 = connection.createStatement()) {
+			ResultSet rs = st1.executeQuery(SQL_COUNT_PATIENTS_OF_SURGEONT);
+			LOG.trace("find by number of surgeons finished");
+			while (rs.next()) {
+				Doctor doctor = new Doctor();
+				doctor.setNumberOfPatients(rs.getInt(1));
+				doctors = doctor.getNumberOfPatients();
+
+			}
+		} catch (SQLException e) {
+			throw new DBException("can not find by  number of surgeons", e);
+		} finally {
+			manager.close(st);
+		}
+		return doctors;
+	}
+
+	@Override
+	public int findNOPDentist() throws DBException {
+		int doctors = 0;
+		DBManager manager = DBManager.getInstance();
+		Statement st = null;
+		LOG.trace("find by number of dentists started");
+		try (Statement st1 = connection.createStatement()) {
+			ResultSet rs = st1.executeQuery(SQL_COUNT_PATIENTS_OF_DENTIST);
+			LOG.trace("find by number of dentists finished");
+			while (rs.next()) {
+				Doctor doctor = new Doctor();
+				doctor.setNumberOfPatients(rs.getInt(1));
+				doctors = doctor.getNumberOfPatients();
+
+			}
+		} catch (SQLException e) {
+			throw new DBException("can not find by  number of dentists", e);
+		} finally {
+			manager.close(st);
+		}
+		return doctors;
+	}
+
+	@Override
+	public int findNOPTherapeutist() throws DBException {
+		int doctors = 0;
+		DBManager manager = DBManager.getInstance();
+		Statement st = null;
+		LOG.trace("find by number of therapeutists started");
+		try (Statement st1 = connection.createStatement()) {
+			ResultSet rs = st1.executeQuery(SQL_COUNT_PATIENTS_OF_THERAPEUTIST);
+			LOG.trace("find by number of therapeutists finished");
+			while (rs.next()) {
+				Doctor doctor = new Doctor();
+				doctor.setNumberOfPatients(rs.getInt(1));
+				doctors = doctor.getNumberOfPatients();
+
+			}
+		} catch (SQLException e) {
+			throw new DBException("can not find by  number of dentists", e);
+		} finally {
+			manager.close(st);
+		}
+		return doctors;
+	}
+
+	public static boolean updateNOP(int numberOfPatients, int id, Connector cnr)
+			throws DBException {
+		Connection cn = null;
+		boolean flag = false;
+		PreparedStatement ps = null;
+		LOG.trace("find by number of patients started");
+
+		try {
+			cn = Connector.getConnection();
+			ps = cn.prepareStatement(SQL_UPDATE_PATIENTS);
+			ps.setInt(1, numberOfPatients);
+			ps.setInt(2, id);
+			ps.executeUpdate();
+			LOG.trace("find by number of patients finished");
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new DBException("can not find by  number of patients", e);
+		} finally {
+			if (ps != null) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
+					throw new DBException(
+							"can not find by  number of patients", e);
+				}
+			}
+		}
+		return flag;
+
+	}
+
+	@Override
+	public int findNOPSurgeons() throws DBException {
+		int doctors = 0;
+		DBManager manager = DBManager.getInstance();
+		Statement st = null;
+		LOG.trace("find by number of surgeons started");
+		try (Statement st1 = connection.createStatement()) {
+			ResultSet rs = st1.executeQuery(SQL_COUNT_PATIENTS_OF_SURGEON);
+			LOG.trace("find by number of surgeons finished");
+			while (rs.next()) {
+				Doctor doctor = new Doctor();
+				doctor.setNumberOfPatients(rs.getInt(1));
+				doctors = doctor.getNumberOfPatients();
+
+			}
+		} catch (SQLException e) {
+			throw new DBException("can not find by  number of surgeons", e);
+		} finally {
+			manager.close(st);
+		}
+		return doctors;
+	}
+
+	@Override
+	public List<Doctor> findAll() throws DBException  {
+		DBManager manager = DBManager.getInstance();
+		Statement st = null;
+		List<Doctor> doctors = new ArrayList<Doctor>();
+		LOG.trace("find all started");
+		try (Statement st1 = connection.createStatement()) {
+			ResultSet rs = st1.executeQuery(SQL_SELECT_ALL_DOCTORS);
+			LOG.trace("find all finished");
+			while (rs.next()) {
+				Doctor doctor = extractDoctorFromResultSet(rs);
+				doctors.add(doctor);
+			}
+		} catch (SQLException e) {
+			throw new DBException("can not find by  number of surgeons", e);
+		} finally {
+			manager.close(st);
+		}
+		return doctors;
+	}
+
+	@Override
+	public List<Doctor> findDoctorsByCategory(String category) throws DBException {
+		List<Doctor> doctors = new ArrayList<Doctor>();
+		DBManager manager = DBManager.getInstance();
+		Statement st = null;
+		LOG.trace("find doctors by category started");
+		try (PreparedStatement st1 = connection
+				.prepareStatement(SQL_SELECT_ALL_DOCTORS_BY_CATEGORY)) {
+			st1.setString(1, category);
+			ResultSet rs = st1.executeQuery(SQL_SELECT_ALL_DOCTORS);
+			LOG.trace("find doctors by category finished");
+			while (rs.next()) {
+				Doctor doctor = extractDoctorFromResultSet(rs);
+				doctors.add(doctor);
+			}
+		} catch (SQLException e) {
+			throw new DBException("can not find by  number of surgeons", e);
+		} finally {
+			manager.close(st);
+		}
+		return doctors;
+	}
+
+	private Doctor extractDoctorFromResultSet(ResultSet rs) throws SQLException {
+		Doctor doctor = new Doctor();
+		doctor.setId(rs.getInt(1));
+		doctor.setSurname(rs.getString(2));
+		doctor.setName(rs.getString(3));
+		doctor.setPatronymic(rs.getString(4));
+		doctor.setCategory(rs.getString(5));
+		doctor.setDateOfBirth(rs.getDate(6));
+		doctor.setPhone(rs.getString(7));
+		doctor.setNumberOfPatients(rs.getInt(8));
+		return doctor;
+	}
+
+	@Override
+	public List<Doctor> finDoctorsBySurname(String surname) throws DBException {
+		List<Doctor> doctors = new ArrayList<Doctor>();
+		DBManager manager = DBManager.getInstance();
+		Statement st = null;
+		LOG.trace("find doctors by surname started");
+		try (PreparedStatement st1 = connection
+				.prepareStatement(SQL_SORTBYSURNAME_ALL_DOCTORS)) {
+			st1.setString(1, surname);
+			ResultSet rs = st1.executeQuery(SQL_SELECT_ALL_DOCTORS);
+			LOG.trace("find doctors by surname finished");
+			while (rs.next()) {
+				Doctor doctor = extractDoctorFromResultSet(rs);
+				doctors.add(doctor);
+			}
+		} catch (SQLException e) {
+			LOG.error("can not find Doctors by numer of surgeons", e);
+			throw new DBException("can not find by  number of surgeons", e);
+		} finally {
+			manager.close(st);
+		}
+		return doctors;
+	}
+
+	public static boolean create(int id, String surname, String name,
+			String patronymic, String category, Date dateOfBirth,
+			String telephone, int numberOfPatients, Connector cnr) throws DBException {
+		boolean flag = false;
+		Connection cn = null;
+		PreparedStatement ps = null;
+		DBManager manager = DBManager.getInstance();
+		LOG.trace("create started");
+		try {
+			cn = Connector.getConnection();
+			ps = cn.prepareStatement(sql);
+			ps.setInt(1, id);
+			ps.setString(2, surname);
+			ps.setString(3, name);
+			ps.setString(4, patronymic);
+			ps.setString(5, category);
+			ps.setDate(6, dateOfBirth);
+			ps.setString(7, telephone);
+			ps.setInt(8, numberOfPatients);
+			ps.executeUpdate();
+			flag = true;
+			LOG.trace("create started");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if (ps != null) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
+					manager.close(ps);
+					e.printStackTrace();
+				}
+			}
+		}
+		return flag;
+	}
+
+	public static boolean delete(Integer id, Connector cnr) {
+		boolean flag = false;
+		Connection cn = null;
+		PreparedStatement ps = null;
+		try {
+			cn = Connector.getConnection();
+			ps = cn.prepareStatement(SQL_DELETE_FROM_DOCTOR);
+			ps.setInt(1, id);
+			ps.execute();
+			flag = true;
+		} catch (SQLException e) {
+			System.err.println("SQL exception (request or table failed): " + e);
+		} finally {
+			if (ps != null) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
+					System.err.println("Close statement failed: " + e);
+				}
+			}
+		}
+
+		return flag;
+	}
+
+	public static boolean update(int id, String surname, String name,
+			String patronymic, String category, Date dateOfBirth,
+			String telephone, int numberOfPatients, Connector cnr) {
+		Connection cn = null;
+		boolean flag = false;
+		PreparedStatement ps = null;
+		try {
+			cn = Connector.getConnection();
+			ps = cn.prepareStatement(SQL_UPDATE_FROM_DOCOTOR);
+			ps.setInt(1, id);
+			ps.setString(2, surname);
+			ps.setString(3, name);
+			ps.setString(4, patronymic);
+			ps.setString(5, category);
+			ps.setDate(6, dateOfBirth);
+			ps.setString(7, telephone);
+			ps.setInt(8, numberOfPatients);
+			ps.setInt(9, id);
+			ps.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if (ps != null) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+		return flag;
+
+	}
+
+	public List<Patient> showPatientsForDoctor(int doctorId){
+		List<Patient> patients = new ArrayList<Patient>();
+		try (PreparedStatement st = connection
+				.prepareStatement(SQL_SELECT_PATIENTS_FOR_DOCTORS)) {
+			st.setInt(1, doctorId);
+			ResultSet rs = st.executeQuery();
+			while (rs.next()) {
+				Patient patient = new PatientDAOImpl(connection)
+						.extractPatientFromResultSet(rs);
+				patients.add(patient);
+			}
+		} catch (SQLException e) {
+			// TODO: log with error level
+			System.err.println("SQL exception (request or table failed): " + e);
+		}
+		return patients;
+	}
+
+	@Override
+	public int findNOPNurse(int idOfAttendingMedicalDoctor) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+}

@@ -1,0 +1,48 @@
+package ua.nure.bratiuschenko.SummaryTask4.web.util;
+
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
+import ua.nure.bratiuschenko.SummaryTask4.web.controllers.PatientController;
+
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.PdfWriter;
+
+public class PdfGenerator {
+	static int id = 0;
+	static String status = null;
+	static String finalDiagn = null;
+	PatientController patientC = new PatientController();
+
+	public static final String RESULT = "src/ua/nure/bratiuschenko/SummaryTask4/pdfFiles/file.pdf";
+
+	 public static void main(String[] args)
+		    	throws DocumentException, IOException {
+		    	new PdfGenerator().createPdf(RESULT,id,status,finalDiagn);
+		    }
+
+	public void createPdf(String filename, int id, String status,
+			String finalDiagn) throws DocumentException, IOException, FileNotFoundException {
+
+		Document document = new Document();
+		PdfWriter.getInstance(document, new FileOutputStream(filename));
+		document.open();
+		document.add(new Paragraph(
+				"          				                Information about the patient that was discharged"));
+		document.add(new Paragraph("Id of patient: " + id));
+		document.add(new Paragraph("Surname:"));
+		document.add(new Paragraph("Name:"));
+		document.add(new Paragraph("Patronymic:"));
+		document.add(new Paragraph("Date of birth:"));
+		document.add(new Paragraph("Id of attending medical doctor:"));
+		document.add(new Paragraph("Procedures:"));
+		document.add(new Paragraph("Medicines:"));
+		document.add(new Paragraph("Operations:"));
+		document.add(new Paragraph("Diagnosis:  " + finalDiagn));
+		document.add(new Paragraph("Status:  " + status));
+		document.close();
+	}
+}

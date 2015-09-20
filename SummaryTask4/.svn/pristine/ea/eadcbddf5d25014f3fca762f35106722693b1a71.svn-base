@@ -1,0 +1,194 @@
+package ua.nure.bratiuschenko.SummaryTask4.dao;
+
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+
+import ua.nure.bratiuschenko.SummaryTask4.domain.Doctor;
+import ua.nure.bratiuschenko.SummaryTask4.utils.Connector;
+
+public class DoctorDAOImpl implements DoctorDAO {
+
+	public static final String SQL_SELECT_ALL_DOCTORS = "SELECT * FROM doctor";
+	public static final String SQL_SELECT_ALL_DOCTORS_BY_CATEGORY = "SELECT * FROM doctor where category = ?";
+	public static final String SQL_SORTBYSURNAME_ALL_DOCTORS = " SELECT * FROM doctor ORDER BY `surname` ASC";
+	static String sql = "INSERT INTO `jtj-948`.`doctor` (id,surname,name,patronymic,category,`date of birth`,telephone,`number of patients`)"
+			+ "VALUES (?,?,?,?,?,?,?,?)";
+	private static final String SQL_DELETE_FROM_DOCTOR = "DELETE FROM doctor where id=?";
+
+	private static final String SQL_UPDATE_FROM_DOCOTOR = "UPDATE `jtj-948`.`doctor` SET `id`=?, `surname`=?, `name`=?, `patronymic`=?, `category`=?, `date of birth`=?,`telephone`=?, `number of patients`=?  WHERE `id`=?";
+
+	private Connection connection;
+
+	public DoctorDAOImpl(Connection connection) {
+		this.connection = connection;
+	}
+
+	@Override
+	public List<Doctor> findAll() {
+		List<Doctor> doctors = new ArrayList<Doctor>();
+		try (Statement st = connection.createStatement()) {
+			ResultSet rs = st.executeQuery(SQL_SELECT_ALL_DOCTORS);
+			while (rs.next()) {
+				Doctor doctor = extractDoctorFromResultSet(rs);
+				doctors.add(doctor);
+			}
+		} catch (SQLException e) {
+			// TODO: log with error level
+			System.err.println("SQL exception (request or table failed): " + e);
+		}
+		return doctors;
+	}
+
+	@Override
+	public List<Doctor> findDoctorsByCategory(String category) {
+		List<Doctor> doctors = new ArrayList<Doctor>();
+		try (PreparedStatement st = connection
+				.prepareStatement(SQL_SELECT_ALL_DOCTORS_BY_CATEGORY)) {
+			st.setString(1, category);
+			ResultSet rs = st.executeQuery(SQL_SELECT_ALL_DOCTORS);
+			while (rs.next()) {
+				Doctor doctor = extractDoctorFromResultSet(rs);
+				doctors.add(doctor);
+			}
+		} catch (SQLException e) {
+			// TODO: log with error level
+			System.err.println("SQL exception (request or table failed): " + e);
+		}
+		return doctors;
+	}
+
+	private Doctor extractDoctorFromResultSet(ResultSet rs) throws SQLException {
+		Doctor doctor = new Doctor();
+		doctor.setId(rs.getInt(1));
+		doctor.setSurname(rs.getString(2));
+		doctor.setName(rs.getString(3));
+		doctor.setPatronymic(rs.getString(4));
+		doctor.setCategory(rs.getString(5));
+		doctor.setDateOfBirth(rs.getDate(6));
+		doctor.setPhone(rs.getString(7));
+		doctor.setNumberOfPatients(rs.getInt(8));
+		return doctor;
+	}
+
+	@Override
+	public List<Doctor> finDoctorsBySurname(String surname) {
+		List<Doctor> doctors = new ArrayList<Doctor>();
+		try (PreparedStatement st = connection
+				.prepareStatement(SQL_SORTBYSURNAME_ALL_DOCTORS)) {
+			st.setString(1, surname);
+			ResultSet rs = st.executeQuery(SQL_SELECT_ALL_DOCTORS);
+			while (rs.next()) {
+				Doctor doctor = extractDoctorFromResultSet(rs);
+				doctors.add(doctor);
+			}
+		} catch (SQLException e) {
+			// TODO: log with error level
+			System.err.println("SQL exception (request or table failed): " + e);
+		}
+		return doctors;
+	}
+
+	public static boolean create(int id, String surname, String name,
+			String patronymic, String category, Date dateOfBirth,
+			String telephone, int numberOfPatients, Connector cnr) {
+		boolean flag = false;
+		Connection cn = null;
+		PreparedStatement ps = null;
+		try {
+			cn = Connector.getConnection();
+			ps = cn.prepareStatement(sql);
+			ps.setInt(1, id);
+			ps.setString(2, surname);
+			ps.setString(3, name);
+			ps.setString(4, patronymic);
+			ps.setString(5, category);
+			ps.setDate(6, dateOfBirth);
+			ps.setString(7, telephone);
+			ps.setInt(8, numberOfPatients);
+			ps.executeUpdate();
+			flag = true;
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if (ps != null) {
+				try {
+					ps.close();
+					// Connector.putConnection(cn);
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+		return flag;
+	}
+
+	public static boolean delete(Integer id, Connector cnr) {
+		boolean flag = false;
+		Connection cn = null;
+		PreparedStatement ps = null;
+		try {
+			cn = Connector.getConnection();
+			ps = cn.prepareStatement(SQL_DELETE_FROM_DOCTOR);
+			ps.setInt(1, id);
+			ps.execute();
+			flag = true;
+		} catch (SQLException e) {
+			System.err.println("SQL exception (request or table failed): " + e);
+		} finally {
+			if (ps != null) {
+				try {
+					ps.close();
+					// Connector.putConnection(cn);
+				} catch (SQLException e) {
+					System.err.println("Close statement failed: " + e);
+				}
+			}
+		}
+
+		return flag;
+	}
+
+	public static boolean update(int id, String surname, String name,
+			String patronymic, String category, Date dateOfBirth,
+			String telephone, int numberOfPatients, Connector cnr) {
+		Connection cn = null;
+		boolean flag = false;
+		PreparedStatement ps = null;
+		try {
+			cn = Connector.getConnection();
+			ps = cn.prepareStatement(SQL_UPDATE_FROM_DOCOTOR);
+			ps.setInt(1, id);
+			ps.setString(2, surname);
+			ps.setString(3, name);
+			ps.setString(4, patronymic);
+			ps.setString(5, category);
+			ps.setDate(6, dateOfBirth);
+			ps.setString(7, telephone);
+			ps.setInt(8, numberOfPatients);
+			ps.setInt(9, id);
+			ps.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if (ps != null) {
+				try {
+					ps.close();
+					// Connector.putConnection(cn);
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+		return flag;
+
+	}
+}

@@ -1,0 +1,103 @@
+package ua.nure.bratiuschenko.SummaryTask4.domain;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+import ua.nure.bratiuschenko.SummaryTask4.utils.Connector;
+
+public class CollectionPatient {
+	public static final String SQL_SELECT_ALL_PATIENTS = "SELECT * FROM patient";
+	public static final String SQL_SELECT_ALL_BYALPHABET = "SELECT * FROM patient  ORDER BY `surname` ASC";
+	public static final String SQL_SELECT_ALL_DATEOFBIRTH = "SELECT * FROM patient  ORDER BY `date of birth` ASC";
+	public static String findAll(Connector cnr) {
+		StringBuilder result = new StringBuilder(
+				"<h3>PATIENTS</h3>"
+						+ "<table border=\"1\"><tr><th>id</th><th>surname</th><th>name</th><th>patronymic</th><th>date of birth</th><th>id of attending medical doctor</th><th>procedures</th><th>medicines</th><th>operations</th>");
+		Statement st = null;
+		try {
+			st = cnr.getStatement();
+			ResultSet rs = st.executeQuery(SQL_SELECT_ALL_PATIENTS);
+			while (rs.next()) {
+				result.append("<tr><td>" + rs.getInt(1) + "</td>");
+				result.append("<td>" + rs.getString(2) + "</td>");
+				result.append("<td>" + rs.getString(3) + "</td>");
+				result.append("<td>" + rs.getString(4) + "</td>");
+				result.append("<td>" + rs.getDate(5) + "</td>");
+				result.append("<td>" + rs.getInt(6) + "</td>");
+				result.append("<td>" + rs.getString(7) + "</td>");
+				result.append("<td>" + rs.getString(8) + "</td>");
+				result.append("<td>" + rs.getString(9) + "</td></tr>");
+			}
+			result.append("</table>");
+		} catch (SQLException e) {
+			System.err.println("SQL exception (request or table failed): " + e);
+		} finally {
+			if (st != null) {
+				cnr.closeStatement(st);
+				// cnr.closeConnection();
+			}
+		}
+		return result.toString();
+	}
+
+	public static String byAlphabet(Connector cnr) {
+		StringBuilder result = new StringBuilder(
+				"<h3>BY ALPHABET</h3>"
+						+ "<table border=\"1\"><tr><th>id</th><th>surname</th><th>name</th><th>patronymic</th><th>date of birth</th><th>id of attending medical doctor</th><th>procedures</th><th>medicines</th><th>operations</th>");
+		Statement st = null;
+		try {
+			st = cnr.getStatement();
+			ResultSet rs = st.executeQuery(SQL_SELECT_ALL_BYALPHABET);
+			while (rs.next()) {
+				result.append("<tr><td>" + rs.getInt(1) + "</td>");
+				result.append("<td>" + rs.getString(2) + "</td>");
+				result.append("<td>" + rs.getString(3) + "</td>");
+				result.append("<td>" + rs.getString(4) + "</td>");
+				result.append("<td>" + rs.getDate(5) + "</td>");
+				result.append("<td>" + rs.getInt(6) + "</td>");
+				result.append("<td>" + rs.getString(7) + "</td>");
+				result.append("<td>" + rs.getString(8) + "</td>");
+				result.append("<td>" + rs.getString(9) + "</td></tr>");
+			}
+			result.append("</table>");
+		} catch (SQLException e) {
+			System.err.println("SQL exception (request or table failed): " + e);
+		} finally {
+			if (st != null) {
+				cnr.closeStatement(st);
+			}
+		}
+		return result.toString();
+	}
+
+	public static String byDateOfBirth(Connector cnr) {
+		StringBuilder result = new StringBuilder(
+				"<h3>BY DATE OF BIRTH</h3>"
+						+ "<table border=\"1\"><tr><th>id</th><th>surname</th><th>name</th><th>patronymic</th><th>date of birth</th><th>id of attending medical doctor</th><th>procedures</th><th>medicines</th><th>operations</th>");
+		Statement st = null;
+		try {
+			st = cnr.getStatement();
+			ResultSet rs = st.executeQuery(SQL_SELECT_ALL_DATEOFBIRTH);
+			while (rs.next()) {
+				result.append("<tr><td>" + rs.getInt(1) + "</td>");
+				result.append("<td>" + rs.getString(2) + "</td>");
+				result.append("<td>" + rs.getString(3) + "</td>");
+				result.append("<td>" + rs.getString(4) + "</td>");
+				result.append("<td>" + rs.getDate(5) + "</td>");
+				result.append("<td>" + rs.getInt(6) + "</td>");
+				result.append("<td>" + rs.getString(7) + "</td>");
+				result.append("<td>" + rs.getString(8) + "</td>");
+				result.append("<td>" + rs.getString(9) + "</td></tr>");
+			}
+			result.append("</table>");
+		} catch (SQLException e) {
+			System.err.println("SQL exception (request or table failed): " + e);
+		} finally {
+			if (st != null) {
+				cnr.closeStatement(st);
+			}
+		}
+		return result.toString();
+	}
+}

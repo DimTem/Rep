@@ -1,0 +1,11 @@
+package ua.nure.bratiuschenko.SummaryTask4.dao;
+
+import java.util.List;
+
+import ua.nure.bratiuschenko.SummaryTask4.domain.Patient;
+
+public interface PatientDAO {
+	List<Patient> findAll();
+	List<Patient> findPatientsSortedByDate();
+	List<Patient> findPatientsSortedBySurname();
+}

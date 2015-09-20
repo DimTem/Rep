@@ -1,0 +1,50 @@
+package ua.nure.bratiuschenko.SummaryTask4.dao;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+public class ConnectionPool {
+
+	private static final String url = "jdbc:mysql://localhost:3306/jtj-948";
+	private static final String user = "admin";
+	private static final String password = "admin";
+
+	static {
+		try {
+			Class.forName("com.mysql.jdbc.Driver");
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public ConnectionPool() {
+	}
+
+	public static Connection getConnection() throws SQLException {
+		return DriverManager.getConnection(url, user, password);
+	}
+
+	public static void putConnection(Connection connection) throws SQLException {
+		connection.close();
+	}
+
+	public static void main(String[] args) throws SQLException {
+		Connection con = ConnectionPool.getConnection();
+		Statement st = con.createStatement();
+		// ResultSet res = st.executeQuery("SELECT * FROM doctor");
+		//ResultSet res2 = st.executeQuery("SELECT * FROM patient");
+		// while (res.next()) {
+		// System.out.println(res.getString(1) + " " + res.getString(2) + " "
+		// + res.getString(3));
+		// }
+//		while (res2.next()) {
+//			System.out.println(res2.getString(1) + " " + res2.getString(2)
+//					+ " " + res2.getString(3) + " " + res2.getString(4) + " "
+//					+ res2.getString(5) + " " + res2.getString(6) + " "
+//					+ res2.getString(7) + " " + res2.getString(8));
+//		}
+	}
+}

@@ -1,0 +1,38 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="ISO-8859-1"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Add doctor</title>
+</head>
+<body>
+	<h2>Add doctor</h2>
+	<form action="/SummaryTask4/Doctor" method="post">
+
+		<table>
+			<tr>
+				<th>id</th>
+				<th>surname</th>
+				<th>name</th>
+				<th>patronymic</th>
+				<th>category</th>
+				<th>date of birth</th>
+				<th>telephone</th>
+				<th>number of patients</th>
+			</tr>
+			<tr>
+				<td><input type="text" name="a_id"required></td>
+				<td><input type="text" name="a_surname"required></td>
+				<td><input type="text" name="a_name"required></td>
+				<td><input type="text" name="a_patronymic"required></td>
+				<td><input type="text" name="a_category"required></td>
+				<td><input type="date" name="a_dateOfBirth" max="1994-08-31" min="1900-12-31"required></td>
+				<td><input type="text" name="a_telephone"required></td>
+				<td><input type="text" name="a_numberOfPatients"></td>
+			</tr>
+		</table>
+		<input type="submit" name="asubmit" value="Create">
+	</form>
+</body>
+</html>

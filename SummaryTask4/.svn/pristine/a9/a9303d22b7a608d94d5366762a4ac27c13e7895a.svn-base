@@ -1,0 +1,253 @@
+package ua.nure.bratiuschenko.SummaryTask4.web.controllers;
+
+import java.io.IOException;
+import java.sql.Date;
+import java.util.List;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import ua.nure.bratiuschenko.SummaryTask4.dao.DoctorDAO;
+import ua.nure.bratiuschenko.SummaryTask4.dao.DoctorDAOImpl;
+import ua.nure.bratiuschenko.SummaryTask4.domain.CollectionDoctor;
+import ua.nure.bratiuschenko.SummaryTask4.domain.Doctor;
+import ua.nure.bratiuschenko.SummaryTask4.utils.Connector;
+import ua.nure.bratiuschenko.SummaryTask4.web.util.TableGenerator;
+
+/**
+ * Servlet implementation class Doctor
+ */
+@WebServlet("/Doctor")
+public class DoctorForAdminController extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+	private DoctorDAO doctorDAO;
+
+	/**
+	 * @see HttpServlet#HttpServlet()
+	 */
+	public DoctorForAdminController() {
+		super();
+		doctorDAO = new DoctorDAOImpl(Connector.getConnection());
+	}
+
+	protected void delete(HttpServletRequest request,
+			HttpServletResponse response, Connector cnr) throws IOException {
+		response.getWriter()
+				.print("<br><form method=\"post\">DELETE: ID=<input type=\"text\" name=\"delete_id\"> <input type=\"submit\""
+						+ " name=\"dsubmit\" value=\"Delete\"></form>");
+		if (request.getParameter("dsubmit") != null
+				&& request.getParameter("delete_id") != null) {
+			boolean result = DoctorDAOImpl.delete(
+					Integer.valueOf(request.getParameter("delete_id")), cnr);
+			response.sendRedirect("/SummaryTask4/Doctor");
+			if (!result) {
+				response.getWriter().print("<p>Something gone wrong</p>");
+
+			}
+		}
+	}
+
+	/**
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
+	 *      response)
+	 */
+	protected void doGet(HttpServletRequest request,
+			HttpServletResponse response) throws ServletException, IOException {
+		Connector cnr = new Connector(Connector.admUser, Connector.admPass);
+		response.setContentType("text/html");
+		int NOPOtolar = doctorDAO.findNOPOtolaryngologistt();
+		if (NOPOtolar != 0) {
+			Integer numberOfPatients = NOPOtolar;
+			Integer id = 10;
+			DoctorDAOImpl.updateNOP(numberOfPatients, id, cnr);
+		}
+		int NOPPsycho = doctorDAO.findNOPPsychologist();
+		if (NOPPsycho != 0) {
+			Integer numberOfPatients = NOPPsycho;
+			Integer id = 9;
+			DoctorDAOImpl.updateNOP(numberOfPatients, id, cnr);
+		}
+		int NOPNeuro = doctorDAO.findNOPNeuropathologist();
+		if (NOPNeuro != 0) {
+			Integer numberOfPatients = NOPNeuro;
+			Integer id = 8;
+			DoctorDAOImpl.updateNOP(numberOfPatients, id, cnr);
+		}
+		int NOPGYN = doctorDAO.findNOPGynaecologist();
+		if (NOPGYN != 0) {
+			Integer numberOfPatients = NOPGYN;
+			Integer id = 7;
+			DoctorDAOImpl.updateNOP(numberOfPatients, id, cnr);
+		}
+		int NOPNurseT = doctorDAO.findNOPNurseT();
+		if (NOPNurseT != 0) {
+			Integer numberOfPatients = NOPNurseT;
+			Integer id = 6;
+			DoctorDAOImpl.updateNOP(numberOfPatients, id, cnr);
+		}
+		int NOPNurse = doctorDAO.findNOPNurse();
+		if (NOPNurse != 0) {
+			Integer numberOfPatients = NOPNurse;
+			Integer id = 5;
+			DoctorDAOImpl.updateNOP(numberOfPatients, id, cnr);
+		}
+
+		int NOPSurgeonT = doctorDAO.findNOPSurgeonT();
+		if (NOPSurgeonT != 0) {
+			Integer numberOfPatients = NOPSurgeonT;
+			Integer id = 4;
+			DoctorDAOImpl.updateNOP(numberOfPatients, id, cnr);
+		}
+		int NOPDentist = doctorDAO.findNOPDentist();
+		if (NOPDentist != 0) {
+			Integer numberOfPatients = NOPDentist;
+			Integer id = 3;
+			DoctorDAOImpl.updateNOP(numberOfPatients, id, cnr);
+		}
+		int NOPTherapeutist = doctorDAO.findNOPTherapeutist();
+		if (NOPTherapeutist != 0) {
+			Integer numberOfPatients = NOPTherapeutist;
+			Integer id = 2;
+			DoctorDAOImpl.updateNOP(numberOfPatients, id, cnr);
+		}
+
+		int NOPSurgeons = doctorDAO.findNOPSurgeons();
+		if (NOPSurgeons != 0) {
+			Integer numberOfPatients = NOPSurgeons;
+			Integer id = 1;
+			DoctorDAOImpl.updateNOP(numberOfPatients, id, cnr);
+		}
+
+		List<Doctor> doctors = doctorDAO.findAll();
+		String doctorsTable = TableGenerator.generateDoctorsTable(doctors);
+
+		if (request.getParameter("dsubmit") == null
+				&& request.getParameter("nsubmit") == null
+				&& request.getParameter("gsubmit") == null
+				&& request.getParameter("neursubmit") == null
+				&& request.getParameter("osubmit") == null
+				&& request.getParameter("psubmit") == null
+				&& request.getParameter("tsubmit") == null
+				&& request.getParameter("sortsubmit") == null
+				&& request.getParameter("sortDatesubmit") == null
+				&& request.getParameter("numberDatesubmit")== null) {
+
+			response.getWriter().print(doctorsTable);
+		}
+
+		response.getWriter()
+				.println(
+						"<a href=/SummaryTask4/jsp/admin/Doctors/DoctorsByCategory.jsp>Show doctors by categories</a>");
+
+		// response.getWriter().print("&nbsp;&nbsp; <a href=/SummaryTask04/jsp/admin/DoctorsByDate.jsp>Show doctors by date of birth </a>");
+		// response.getWriter()
+		// .print("<form action=\"/SummaryTask04/Doctor\" method=\"post\"><input type=\"submit\" name=\"sortsubmit\" value=\"SortDoctors\"></form></a>");
+		response.setContentType("text/html");
+		response.getWriter()
+				.print("&nbsp;&nbsp;&nbsp;<a href=/SummaryTask4/jsp/admin/Doctors/addDoctor.jsp>add doctor</a>&nbsp;&nbsp;&nbsp;");
+		response.getWriter()
+				.print("<a href=/SummaryTask4/jsp/admin/Doctors/deleteDoctor.jsp>delete doctor</a>&nbsp;&nbsp;&nbsp;");
+		response.getWriter()
+				.print("<a href=/SummaryTask4/jsp/admin/Doctors/updateDoctor.jsp>Update doctor</a>&nbsp;&nbsp;&nbsp;<br>");
+		response.getWriter()
+				.print("</br>&nbsp;&nbsp;&nbsp;<a href=/SummaryTask4/Doctor>BACK</a>&nbsp;&nbsp;&nbsp;<br>");
+		delete(request, response, cnr);
+		String dentist = CollectionDoctor.findDentists(cnr);
+		if (request.getParameter("dsubmit") != null) {
+			response.getWriter().print(dentist);
+		}
+		String ginekolog = CollectionDoctor.findGynaecologists(cnr);
+		if (request.getParameter("gsubmit") != null) {
+			response.getWriter().print(ginekolog);
+		}
+		String nurse = CollectionDoctor.findNurses(cnr);
+		if (request.getParameter("nsubmit") != null) {
+
+			response.getWriter().print(nurse);
+		}
+		String neuropathologist = CollectionDoctor.findNeuropathologists(cnr);
+		if (request.getParameter("neursubmit") != null) {
+
+			response.getWriter().print(neuropathologist);
+		}
+		String otolaryngologist = CollectionDoctor.findOtolaryngologists(cnr);
+		if (request.getParameter("osubmit") != null) {
+
+			response.getWriter().print(otolaryngologist);
+		}
+		String psychologist = CollectionDoctor.findPsychologist(cnr);
+		if (request.getParameter("psubmit") != null) {
+
+			response.getWriter().print(psychologist);
+		}
+		String therapeutist = CollectionDoctor.findTherapeutists(cnr);
+		if (request.getParameter("tsubmit") != null) {
+
+			response.getWriter().print(therapeutist);
+		}
+
+		String sort = CollectionDoctor.sortDoctorsByAge(cnr);
+		if (request.getParameter("sortsubmit") != null) {
+
+			response.getWriter().print(sort);
+		}
+		String sortDate = CollectionDoctor.sortDoctorsBySurname(cnr);
+		if (request.getParameter("sortDatesubmit") != null) {
+
+			response.getWriter().print(sortDate);
+		}
+String sortNOP = CollectionDoctor.sortDoctorsByNOP(cnr);
+if(request.getParameter("numberDatesubmit") !=null){
+	response.getWriter().print(sortNOP);
+}
+		if (request.getParameter("asubmit") != null) {
+
+			Integer id = Integer.valueOf(request.getParameter("a_id"));
+			String surname = request.getParameter("a_surname");
+			String name = request.getParameter("a_name");
+			String patronymic = request.getParameter("a_patronymic");
+			String category = request.getParameter("a_category");
+			Date dateOfBirth = Date.valueOf(request
+					.getParameter("a_dateOfBirth"));
+			String telephone = request.getParameter("a_telephone");
+			Integer numberOfPatients = Integer.valueOf(request
+					.getParameter("a_numberOfPatients"));
+			DoctorDAOImpl.create(id, surname, name, patronymic, category,
+					dateOfBirth, telephone, numberOfPatients, cnr);
+			response.sendRedirect("/SummaryTask4/Doctor");
+		}
+		if (request.getParameter("INSERTsubmit") != null) {
+
+			// Integer oldId = Integer.valueOf(request.getParameter("OLDId"));
+
+			Integer id = Integer.valueOf(request.getParameter("INSERTId"));
+			String surname = request.getParameter("INSERTSurname");
+			String name = request.getParameter("INSERTName");
+			String patronymic = request.getParameter("INSERTPatronymic");
+			String category = request.getParameter("INSERTCategory");
+			Date dateOfBirth = Date.valueOf(request
+					.getParameter("INSERTDateOfBirth"));
+			String telephone = request.getParameter("INSERTTelephone");
+			Integer numberOfPatients = Integer.valueOf(request
+					.getParameter("INSERTNumberOfPatients"));
+
+			DoctorDAOImpl.update(id, surname, name, patronymic, category,
+					dateOfBirth, telephone, numberOfPatients, cnr);
+			response.sendRedirect("/SummaryTask4/Doctor");
+		}
+
+	}
+
+	/**
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
+	 *      response)
+	 */
+	protected void doPost(HttpServletRequest request,
+			HttpServletResponse response) throws ServletException, IOException {
+		doGet(request, response);
+	}
+
+}

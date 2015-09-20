@@ -1,0 +1,93 @@
+package ua.nure.bratiuschenko.SummaryTask4.web.controllers;
+
+import java.io.IOException;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.log4j.Logger;
+
+import ua.nure.bratiuschenko.SummaryTask4.utils.CheckUser;
+
+/**
+ * Servlet implementation class Authorization
+ */
+@WebServlet("/auth")
+public class Authorization extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+	private static final Logger LOG = Logger.getLogger(Authorization.class);
+	private static final String LOGING = "Request parameter: loging --> ";
+	/**
+	 * @see HttpServlet#HttpServlet()
+	 */
+	public Authorization() {
+		super();
+	}
+
+	/**
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
+	 *      response)
+	 */
+	protected void doGet(HttpServletRequest request,
+			HttpServletResponse response) throws ServletException, IOException {
+		String login = request.getParameter("login");
+		String password = request.getParameter("pass");
+		String privs = null;
+		privs = CheckUser.check(login, password);
+		response.setContentType("text/html");
+		response.getWriter()
+				.print("<!DOCTYPE html><html><head><meta charset=\"UTF-8\"><title>Authorization</title></head><body>");
+		if (privs != null) {
+			if (privs.equals("doctor")) {
+				LOG.trace(LOGING + login);
+				response.getWriter().print("<br>HELLO DOCTOR</br>");
+				response.sendRedirect("/SummaryTask4/DoctorForDoctor");
+
+			}
+			if (privs.equals("nurse")) {
+				LOG.trace(LOGING + login);
+				response.getWriter().print("<br>HELLO NURSE</br>");
+				response.sendRedirect("/SummaryTask4/Nurse");
+
+			}
+			if (privs.equals("user")) {
+				LOG.trace(LOGING + login);
+				response.getWriter().print("<br>HELLO USER</br>");
+				response.sendRedirect("/SummaryTask4/User");
+
+			}
+			if (privs.equals("administrator") || privs.equals("admin")) {
+				LOG.trace(LOGING + login);
+				response.getWriter().print("<br>HELLO ADMIN </br>");
+				response.getWriter().print(
+						"<br><a href=/SummaryTask4/Doctor> DOCTORS </a><br>");
+
+				response.getWriter().print(
+						"<br><a href=/SummaryTask4/Patient> PATIENTS </br>");
+				response.getWriter().print(
+						"<br><a href=/SummaryTask4/Doctor> DOCTORS </a><br>");
+			}
+		} else {
+			LOG.error(LOGING + login
+					+ "does not exist or you wrote wrong login or password");
+			response.getWriter().print(LOGING + login
+					+ " does not exist or you wrote wrong login or password");
+			response.getWriter().print(
+					"<br><a href=/SummaryTask4/index.jsp> BACK </a><br>");
+		}
+
+	}
+
+	/**
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
+	 *      response)
+	 */
+	protected void doPost(HttpServletRequest request,
+			HttpServletResponse response) throws ServletException, IOException {
+		doGet(request, response);
+	}
+
+}
